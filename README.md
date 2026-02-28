@@ -6,6 +6,13 @@ Zyk lets you build durable workflow automations through conversation with Claude
 
 No visual builder. No connector library. No YAML. Just conversation.
 
+> **⚠️ Early development — not yet alpha.** Zyk is under active development and not ready for production use. Expect rough edges, breaking changes, and missing features. Feedback and issues are very welcome.
+
+**Try it without any setup → [playground.zyk.dev](https://playground.zyk.dev)**
+The playground runs pre-configured workflows in your browser. No Docker, no API keys, no local install needed.
+
+**Stay in the loop** — subscribe for updates at [blog.zyk.dev](https://blog.zyk.dev) or reach out directly at [hello@zyk.dev](mailto:hello@zyk.dev).
+
 ---
 
 ## Prerequisites
