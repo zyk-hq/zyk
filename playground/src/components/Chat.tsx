@@ -276,6 +276,7 @@ export default function Chat({ sessionId }: Props) {
               };
               if (result?.success && result.workflow_id) {
                 track("workflow_created", { name: result.name, trigger: result.trigger });
+                setRightPanel("workflows");
                 const wf: WorkflowInfo = {
                   id: result.workflow_id,
                   name: result.name ?? "",
@@ -356,7 +357,7 @@ export default function Chat({ sessionId }: Props) {
     }
   };
 
-  const [rightPanel, setRightPanel] = useState<"workflows" | "resources">("workflows");
+  const [rightPanel, setRightPanel] = useState<"workflows" | "resources">("resources");
 
   const chatMessages = messages.filter((m) => m.role !== "workflow");
   const workflowMessages = messages.filter(
