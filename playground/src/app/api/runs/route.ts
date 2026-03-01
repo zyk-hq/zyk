@@ -11,6 +11,17 @@ import { hatchetWorkflowName } from "@/lib/code-runner";
 export const dynamic = "force-dynamic";
 export const runtime = "nodejs";
 
+/** Extract server_url and tenantId from the Hatchet JWT without verifying it. */
+function decodeJWT(token: string): { server_url?: string; sub?: string } {
+  try {
+    const payload = token.split(".")[1];
+    const json = Buffer.from(payload.replace(/-/g, "+").replace(/_/g, "/"), "base64").toString("utf8");
+    return JSON.parse(json);
+  } catch {
+    return {};
+  }
+}
+
 export async function GET(req: NextRequest) {
   const { searchParams } = req.nextUrl;
   const sessionId = searchParams.get("sessionId");
@@ -29,20 +40,54 @@ export async function GET(req: NextRequest) {
     nameMap[hatchetWorkflowName(wf.name, wf.sessionId)] = wf.id;
   }
 
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  let rows: any[] = [];
+
   try {
     const hatchet = getHatchetClient();
     const tenantId = hatchet.tenantId;
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    const resp = await (hatchet.api as any).v1WorkflowRunList(tenantId, {
-      since,
-      limit,
-      only_tasks: false,
+
+    // Primary path: use Hatchet SDK REST client
+    try {
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      ...(status ? { statuses: [status as any] } : {}),
-    });
+      const resp = await (hatchet.api as any).v1WorkflowRunList(tenantId, {
+        since,
+        limit,
+        only_tasks: false,
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        ...(status ? { statuses: [status as any] } : {}),
+      });
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      rows = (resp.data as any)?.rows ?? [];
+    } catch (sdkErr) {
+      // Fallback: construct the URL directly from the JWT or env var
+      const token = process.env.HATCHET_CLIENT_TOKEN ?? "";
+      const apiBase =
+        process.env.HATCHET_CLIENT_API_URL ??
+        decodeJWT(token).server_url ??
+        "";
+
+      if (!apiBase) {
+        console.error("[runs] SDK failed and no fallback API URL:", sdkErr);
+        return NextResponse.json({ runs: [], since, warning: "Run history unavailable" });
+      }
+
+      const qs = new URLSearchParams({ since, limit: String(limit), only_tasks: "false" });
+      if (status) qs.set("statuses", status);
+      const url = `${apiBase}/api/v1/stable/tenants/${tenantId}/workflow-runs?${qs}`;
+
+      const res = await fetch(url, {
+        headers: { Authorization: `Bearer ${token}`, "Content-Type": "application/json" },
+      });
+      if (!res.ok) {
+        return NextResponse.json({ runs: [], since, warning: "Run history unavailable" });
+      }
+      const data = await res.json() as { rows?: unknown[] };
+      rows = data.rows ?? [];
+    }
+
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    const rows: any[] = (resp.data as any)?.rows ?? [];
-    const runs = rows.map((r) => {
+    const runs = rows.map((r: any) => {
       const workflowName: string =
         r.displayName?.split("/")?.[0] ?? r.workflowName ?? "unknown";
       return {
