@@ -24,7 +24,7 @@ export default function ConsentBanner() {
         zIndex: 50,
         borderTop: "1px solid var(--border)",
         background: "#111113",
-        padding: "12px 16px",
+        padding: "16px 16px 32px",
       }}
     >
       <div
