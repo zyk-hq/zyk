@@ -357,7 +357,8 @@ export default function Chat({ sessionId }: Props) {
     }
   };
 
-  const [rightPanel, setRightPanel] = useState<"workflows" | "resources">("resources");
+  const [rightPanel, setRightPanel] = useState<"workflows" | "resources">("workflows");
+  const [resourcesSeen, setResourcesSeen] = useState(false);
 
   const chatMessages = messages.filter((m) => m.role !== "workflow");
   const workflowMessages = messages.filter(
@@ -750,7 +751,7 @@ export default function Chat({ sessionId }: Props) {
               return (
                 <button
                   key={panel}
-                  onClick={() => { setRightPanel(panel); track("tab_switched", { tab: panel }); }}
+                  onClick={() => { setRightPanel(panel); track("tab_switched", { tab: panel }); if (panel === "resources") setResourcesSeen(true); }}
                   style={{
                     padding: "10px 18px",
                     fontSize: "12px",
@@ -765,7 +766,17 @@ export default function Chat({ sessionId }: Props) {
                     textTransform: "capitalize",
                   }}
                 >
-                  {panel}
+                  <span style={{ display: "flex", alignItems: "center", gap: "6px" }}>
+                    {panel}
+                    {panel === "resources" && !resourcesSeen && (
+                      <span style={{
+                        width: "6px", height: "6px", borderRadius: "50%",
+                        background: "var(--accent)",
+                        display: "inline-block",
+                        animation: "pulse 1.5s ease-in-out infinite",
+                      }} />
+                    )}
+                  </span>
                 </button>
               );
             })}
