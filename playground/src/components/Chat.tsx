@@ -9,6 +9,7 @@ import {
 import type Anthropic from "@anthropic-ai/sdk";
 import Message, { type MessageType } from "./Message";
 import WorkflowCard, { type WorkflowInfo } from "./WorkflowCard";
+import { track } from "@/lib/analytics";
 
 interface Props {
   sessionId: string;
@@ -160,6 +161,7 @@ export default function Chat({ sessionId }: Props) {
 
     setInput("");
     setLoading(true);
+    track("message_sent");
 
     // Add user message to UI
     const userMsg: MessageType = { role: "user", content: text };
@@ -273,6 +275,7 @@ export default function Chat({ sessionId }: Props) {
                 created_at?: string;
               };
               if (result?.success && result.workflow_id) {
+                track("workflow_created", { name: result.name, trigger: result.trigger });
                 const wf: WorkflowInfo = {
                   id: result.workflow_id,
                   name: result.name ?? "",
@@ -440,7 +443,7 @@ export default function Chat({ sessionId }: Props) {
                   {EXAMPLES.map((ex) => (
                     <button
                       key={ex}
-                      onClick={() => setInput(ex)}
+                      onClick={() => { setInput(ex); track("example_loaded", { example: ex }); }}
                       style={{
                         padding: "6px 14px",
                         borderRadius: "20px",
@@ -572,7 +575,7 @@ export default function Chat({ sessionId }: Props) {
               {EXAMPLES.map((ex) => (
                 <button
                   key={ex}
-                  onClick={() => { setInput(ex); setShowExamples(false); textareaRef.current?.focus(); }}
+                  onClick={() => { setInput(ex); setShowExamples(false); textareaRef.current?.focus(); track("example_loaded", { example: ex }); }}
                   style={{
                     padding: "7px 10px",
                     borderRadius: "6px",
@@ -746,7 +749,7 @@ export default function Chat({ sessionId }: Props) {
               return (
                 <button
                   key={panel}
-                  onClick={() => setRightPanel(panel)}
+                  onClick={() => { setRightPanel(panel); track("tab_switched", { tab: panel }); }}
                   style={{
                     padding: "10px 18px",
                     fontSize: "12px",
