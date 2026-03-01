@@ -133,6 +133,19 @@ export const TOOLS: Tool[] = [
     },
   },
   {
+    name: "list_runs",
+    description: "List recent workflow run executions. Optionally filter by status.",
+    input_schema: {
+      type: "object" as const,
+      properties: {
+        limit: { type: "number", description: "Max runs to return (default 20)" },
+        status: { type: "string", description: "Filter by status: COMPLETED, FAILED, RUNNING, QUEUED" },
+        since_hours: { type: "number", description: "How many hours back to look (default 24)" },
+      },
+      required: [],
+    },
+  },
+  {
     name: "delete_workflow",
     description: "Remove a workflow from the registry and stop its worker process.",
     input_schema: {
@@ -362,6 +375,17 @@ export async function executeTool(
         })),
         count: workflows.length,
       };
+    }
+
+    case "list_runs": {
+      const { limit = 20, status, since_hours = 24 } = input;
+      const base = process.env.ZYK_WEBHOOK_BASE ?? "http://localhost:3000";
+      const params = new URLSearchParams({ sessionId, limit: String(limit), since_hours: String(since_hours) });
+      if (status) params.set("status", status);
+      const res = await fetch(`${base}/api/runs?${params}`);
+      const data = await res.json() as { runs?: unknown[]; error?: string };
+      if (!res.ok) return { error: data.error ?? "Failed to fetch runs" };
+      return data;
     }
 
     case "delete_workflow": {
