@@ -1083,6 +1083,16 @@ export default function Chat({ sessionId }: Props) {
                   Connect your own Slack, CRMs, databases, GitHub, and any other API — Zyk uses real TypeScript so if Claude knows the API, it works.
                 </div>
 
+                {/* Feedback */}
+                <div style={{ textAlign: "center", paddingTop: "4px", paddingBottom: "8px" }}>
+                  <a
+                    href="mailto:hello@zyk.dev"
+                    style={{ fontSize: "12px", color: "var(--text-muted)", textDecoration: "none" }}
+                  >
+                    Feedback? <span style={{ textDecoration: "underline", textUnderlineOffset: "2px" }}>hello@zyk.dev</span>
+                  </a>
+                </div>
+
               </div>
             </div>
           )}
