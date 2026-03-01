@@ -848,6 +848,7 @@ export default function Chat({ sessionId }: Props) {
                   <div style={{ display: "flex", flexDirection: "column", gap: "6px" }}>
                     {[
                       { cmd: "List my workflows", desc: "Show all workflows in this session" },
+                      { cmd: "List my runs", desc: "Show recent workflow executions" },
                       { cmd: "Delete all my workflows", desc: "Remove everything and start fresh" },
                       { cmd: "Delete workflow [name]", desc: "Remove a specific workflow by name" },
                       { cmd: "Run workflow [name]", desc: "Trigger a workflow manually" },
