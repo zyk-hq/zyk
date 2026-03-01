@@ -632,8 +632,8 @@ export default function Chat({ sessionId }: Props) {
               onClick={() => setShowExamples((v) => !v)}
               title="Show examples"
               style={{
-                width: "32px",
                 height: "32px",
+                padding: "0 10px",
                 borderRadius: "8px",
                 background: showExamples ? "var(--accent)" : "var(--bg-tertiary)",
                 color: showExamples ? "#fff" : "var(--text-muted)",
@@ -641,16 +641,19 @@ export default function Chat({ sessionId }: Props) {
                 cursor: "pointer",
                 display: "flex",
                 alignItems: "center",
-                justifyContent: "center",
+                gap: "5px",
                 flexShrink: 0,
+                fontSize: "12px",
+                fontFamily: "var(--font-sans)",
                 transition: "background 0.15s, color 0.15s",
               }}
             >
-              <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+              <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
                 <circle cx="12" cy="12" r="10"/>
                 <line x1="12" y1="8" x2="12" y2="12"/>
                 <line x1="12" y1="16" x2="12.01" y2="16"/>
               </svg>
+              Examples
             </button>
           )}
           <button
