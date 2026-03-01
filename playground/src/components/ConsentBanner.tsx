@@ -40,7 +40,7 @@ export default function ConsentBanner() {
         }}
       >
         <p style={{ fontSize: "13px", color: "var(--text-muted)", margin: 0 }}>
-          We use anonymous analytics (PostHog) to understand how Zyk is used.
+          We use anonymous analytics and session recordings (PostHog) to understand how Zyk is used.
           No personal data or IP addresses are stored.{" "}
           <Link
             href="/privacy"

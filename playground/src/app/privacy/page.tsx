@@ -11,7 +11,7 @@ export default function PrivacyPage() {
       </Link>
 
       <h1 style={{ marginTop: "16px", fontSize: "24px", fontWeight: 600, color: "#fff" }}>Privacy Policy</h1>
-      <p style={{ marginTop: "4px", fontSize: "13px", color: "var(--text-muted)" }}>Last updated: February 2026</p>
+      <p style={{ marginTop: "4px", fontSize: "13px", color: "var(--text-muted)" }}>Last updated: March 2026</p>
 
       <div style={{ marginTop: "32px", display: "flex", flexDirection: "column", gap: "24px", fontSize: "14px", lineHeight: 1.7, color: "var(--text-muted)" }}>
         <section>
@@ -21,7 +21,7 @@ export default function PrivacyPage() {
             <a href="https://posthog.com" target="_blank" rel="noopener noreferrer" style={{ color: "var(--text)", textDecoration: "underline", textUnderlineOffset: "2px" }}>
               PostHog
             </a>{" "}
-            to collect anonymous usage data — specifically which features are used and how often. This helps us understand what&apos;s working and what to improve.
+            to collect anonymous usage data — specifically which features are used and how often. This includes session recordings (screen interactions, clicks, and scrolls) to help us understand how the playground is used and what to improve. No personal data is captured in recordings.
           </p>
         </section>
 
