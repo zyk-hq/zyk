@@ -1,17 +1,37 @@
-# Zyk — Conversational Workflow Automation
+# Zyk — Workflow Automation for Claude Desktop
 
 **Describe it. Watch it build. Deploy it.**
 
-Zyk lets you build durable workflow automations through conversation with Claude. Describe what you want in plain English, Claude writes real TypeScript, and Zyk runs it on [Hatchet](https://hatchet.run) — a durable execution engine that handles retries, scheduling, and failure recovery.
+We're betting on two things: **Claude as the interface** for building and running automations, and **Hatchet as the engine** for executing them reliably. Zyk is what happens when you combine them.
+
+You describe a workflow in plain English inside Claude Desktop. Zyk generates real TypeScript and runs it on [Hatchet](https://hatchet.run) — a durable execution engine with retries, scheduling, and failure recovery built in by design.
 
 No visual builder. No connector library. No YAML. Just conversation.
 
-> **⚠️ Early development — not yet alpha.** Zyk is under active development and not ready for production use. Expect rough edges, breaking changes, and missing features. Feedback and issues are very welcome.
+**What durable means in practice:** a workflow can fire on a Slack message, create a GitHub issue, post Acknowledge/Escalate buttons back to Slack, and wait hours for a human to respond — then resume and close the loop automatically. No split endpoints, no manual state management.
+
+**The same Claude Desktop interface works for everyone involved.** The engineer who built the incident response workflow and the on-call engineer who gets paged both interact through Claude. Builders create and manage. Participants approve, acknowledge, and respond. No separate dashboard needed.
+
+Open source and self-hostable. One command to run. The generated code lives in your repo.
+
+> **⚠️ Early development.** Zyk is under active development. Expect rough edges and breaking changes. Feedback and issues are very welcome.
 
 **Try it without any setup → [zyk.dev](https://zyk.dev)**
 The playground runs pre-configured workflows in your browser. No Docker, no API keys, no local install needed.
 
-**Stay in the loop** — subscribe for updates at [blog.zyk.dev](https://blog.zyk.dev) or reach out directly at [hello@zyk.dev](mailto:hello@zyk.dev).
+**Stay in the loop** — subscribe at [blog.zyk.dev](https://blog.zyk.dev) or reach out at [hello@zyk.dev](mailto:hello@zyk.dev).
+
+---
+
+## Why this stack
+
+**Claude Desktop** is becoming the daily interface for knowledge workers. Instead of building a separate UI, Zyk plugs into it — builders describe automations in conversation, Claude generates the code, Zyk deploys it. No new tool to learn.
+
+**Hatchet over Temporal?** Single Docker image (Hatchet Lite), Postgres-only dependency, no Kafka or Cassandra, beautiful built-in monitoring UI. Temporal is powerful but complex to self-host. Hatchet is one `docker compose up`. That matters for small teams.
+
+**Real TypeScript over a DSL.** Previous automation tools lock you into their connector library. If the connector doesn't exist, you're blocked. Claude knows thousands of APIs from training — it writes the HTTP calls directly. No connector maintenance, no limitations.
+
+**Durable execution over serverless functions.** Serverless functions have hard execution timeouts — typically 10–15 minutes. That's fine for a webhook handler, but it makes human-in-the-loop workflows impossible to build correctly. If your workflow posts an approval request to Slack and needs to wait hours for a response, a Lambda times out before the human clicks anything. You end up splitting the workflow into separate functions wired together with queues and external state — which you now have to manage yourself. Hatchet workflows are long-running processes: they can pause mid-execution, wait indefinitely for a human signal, and resume exactly where they left off. No queues, no external state store, no split endpoints.
 
 ---
 
@@ -235,10 +255,6 @@ Tell Claude:
 
 > "Run the hello-world workflow with name='Zyk'"
 
-Or directly:
-
-> "Run workflow wf-a1b2c3d4 with params {\"name\": \"Zyk\"}"
-
 You'll get back a `run_id`:
 
 ```json
@@ -257,10 +273,6 @@ Tell Claude:
 
 > "Check the status of that run"
 
-Or pass the run_id explicitly:
-
-> "get_status for workflow wf-a1b2c3d4, run 550e8400-..."
-
 ---
 
 ### Step 5: Verify in the Hatchet UI
@@ -271,22 +283,20 @@ You should see:
 - The `hello-world` workflow registered
 - A completed run with the output `{ message: "Hello, Zyk! It is 2026-..." }`
 
-The Hatchet UI gives you full visibility into every run, every step, retries, and timing — without building any dashboard yourself.
+The Hatchet UI gives you full visibility into every run, every step, retries, and timing.
 
 **Hatchet concepts at a glance:**
-- **Workflow** — the blueprint: a named set of tasks with their order, dependencies, and retry policy
-- **Worker** — the running process that executes a workflow. Zyk spawns one worker subprocess per workflow; each worker connects to Hatchet via gRPC and waits for work
-- **Run** — a single execution of a workflow. Created when you trigger it manually or on schedule
+- **Workflow** — a named set of tasks with their order, dependencies, and retry policy
+- **Worker** — the running process that executes a workflow. Zyk spawns one worker subprocess per workflow; each connects to Hatchet via gRPC and waits for work
+- **Run** — a single execution of a workflow
 
 ---
 
 ### Step 6: Test the webhook receiver
 
-If you create a webhook-triggered workflow, you can trigger it with `curl`:
+Trigger any workflow from outside Claude:
 
 ```bash
-# First, create a webhook-triggered workflow and note its ID
-# Then trigger it:
 curl -X POST http://localhost:3100/webhook/wf-a1b2c3d4 \
   -H "Content-Type: application/json" \
   -d '{"name": "webhook caller"}'
@@ -303,8 +313,6 @@ Response:
 }
 ```
 
-You can also trigger any manually-triggered workflow this way — the webhook receiver works for all registered workflows.
-
 ---
 
 ### Step 7: Update the workflow
@@ -313,7 +321,7 @@ Tell Claude:
 
 > "Update the hello-world workflow to also log the current Node.js version"
 
-Claude will call `update_workflow` with new code. The worker restarts automatically. The workflow ID is preserved — existing references still work.
+Claude calls `update_workflow` with new code. The worker restarts automatically. The workflow ID is preserved.
 
 ---
 
@@ -327,6 +335,40 @@ This stops the worker process, removes the code file, and removes it from the re
 
 ---
 
+## How it works
+
+```
+You (natural language)
+    ↓
+Claude Desktop / Claude Code
+    ↓  MCP protocol over stdio
+Zyk MCP Server
+    ├── workflows/registry.json   persisted workflow registry
+    └── (one subprocess per workflow)
+        Worker  →  esbuild compiles .ts at deploy time
+            ↓  gRPC
+        Hatchet Engine  (Docker :8888 UI, :8080 REST, :7077 gRPC)
+            ↓
+        PostgreSQL  (run history, scheduling)
+```
+
+**Worker lifecycle:** each worker forks as a child process, sends a `ready` handshake once connected to Hatchet, and auto-restarts on crash with exponential backoff (1s → 2s → 4s → … → 60s, max 5 retries). Workers are restored automatically when the MCP server restarts.
+
+**Scheduling:** cron expressions live inside the workflow code (`on: { cron: "0 8 * * *" }`). Hatchet owns scheduling entirely — it reads the cron from the registered workflow and fires runs on time.
+
+**Slack interactions:** workflows post a message with buttons, set `block_id` to a `correlationId`, then poll `GET /slack/pending/:correlationId` every 3 seconds. When a user clicks a button, Zyk's webhook server receives the Slack interaction, stores the result, and the polling loop picks it up. No external event system needed.
+
+---
+
+## Known limitations
+
+- **Single-user/single-team.** All workflows share one Hatchet tenant. No auth, no per-user namespacing. Multi-tenant isolation is future work.
+- **Slack interaction state is in-memory.** If the MCP server restarts while a workflow is waiting for a Slack button click, that pending state is lost.
+- **No code sandboxing.** Generated workflows run with full Node.js permissions and inherit the MCP server's environment variables. This is the right tradeoff for self-hosted single-user use; it's not appropriate for untrusted multi-user environments.
+- **Webhook receiver is unauthenticated.** `POST /webhook/:id` accepts requests from anywhere. For local dev this is fine; for public deployment, put it behind a reverse proxy with auth.
+
+---
+
 ## Troubleshooting
 
 ### "HATCHET_CLIENT_TOKEN is not set"
@@ -336,8 +378,8 @@ The env var isn't reaching the MCP server process. In Claude Desktop, make sure 
 ### Tools don't appear in Claude Desktop
 
 - Confirm the `args` path is **absolute** and uses the correct slash style for your OS
-- **Windows:** make sure you're editing the right config file (see table in step 5). If you installed from the **Windows Store**, the `%APPDATA%\Roaming\Claude\` path is silently ignored — use the `%LOCALAPPDATA%\Packages\Claude_pzs8sxrjxfjjc\LocalCache\Roaming\Claude\` path instead.
-- Test the server manually: run `node path/to/dist/index.js` in a terminal — it should print `Zyk MCP server running on stdio` and hang (waiting on stdin). That's correct.
+- **Windows:** make sure you're editing the right config file (see table above). If you installed from the **Windows Store**, the `%APPDATA%\Roaming\Claude\` path is silently ignored — use the `%LOCALAPPDATA%\Packages\Claude_pzs8sxrjxfjjc\LocalCache\Roaming\Claude\` path instead.
+- Test the server manually: run `node path/to/dist/index.js` in a terminal — it should print `Zyk MCP server running on stdio` and hang. That's correct.
 - Check Claude Desktop MCP logs:
   - **macOS:** `~/Library/Logs/Claude/mcp-server-zyk.log`
   - **Windows (installer):** `%APPDATA%\Roaming\Claude\logs\mcp-server-zyk.log`
@@ -355,8 +397,6 @@ docker compose ps
 nc -zv localhost 7077
 ```
 
-Also check that `HATCHET_HOST_PORT` is set correctly. Default for local dev: `localhost:7077`.
-
 ### Workflow runs appear in Hatchet under a different tenant
 
 The token was generated for a different tenant than the one you're viewing. Regenerate:
@@ -366,12 +406,6 @@ node scripts/generate-token.js
 ```
 
 Then update `HATCHET_CLIENT_TOKEN` in `.env`, `.mcp.json`, and `claude_desktop_config.json`.
-
-### Hatchet dashboard shows the workflow but no runs
-
-The worker registered but the run trigger failed. Check:
-- The workflow name in the code matches exactly the `name` passed to `create_workflow`
-- There are no TypeScript errors in the generated code (Claude should flag these)
 
 ### Worker crashes immediately after create_workflow
 
@@ -392,8 +426,6 @@ docker compose logs -f hatchet-engine
 
 ### "Cannot find package 'tsx'" in worker
 
-`tsx` must be installed in `mcp-server/node_modules`. Run:
-
 ```bash
 cd mcp-server && npm install
 ```
@@ -402,9 +434,7 @@ cd mcp-server && npm install
 
 ## Adding secrets for real workflows
 
-When creating a workflow that calls external APIs (Slack, Stripe, etc.), you need to pass the relevant secrets through to the MCP server process.
-
-**Claude Desktop** — add to the `env` block:
+**Claude Desktop** — add to the `env` block in `claude_desktop_config.json`:
 
 ```json
 {
@@ -422,9 +452,9 @@ When creating a workflow that calls external APIs (Slack, Stripe, etc.), you nee
 }
 ```
 
-**Claude Code** — add to `.mcp.json`'s `env` block, or set them in your shell before launching `claude` (child processes inherit the shell environment).
+**Claude Code** — add to `.mcp.json`'s `env` block, or set them in your shell before launching `claude`.
 
-Generated workflow code accesses them via `process.env.SLACK_TOKEN` etc. — they're available in worker subprocesses automatically because workers inherit the MCP server's environment.
+Generated workflow code accesses them via `process.env.SLACK_BOT_TOKEN` etc. — workers inherit the MCP server's environment automatically.
 
 ---
 
@@ -474,9 +504,9 @@ See [`examples/`](./examples):
 
 | File | What it does | Trigger | Requires |
 |------|-------------|---------|----------|
-| [`daily-revenue-report.ts`](./examples/daily-revenue-report.ts) | Fetch Stripe revenue → post to Slack | Schedule (8 AM daily) | `STRIPE_SECRET_KEY`, `SLACK_TOKEN` |
-| [`new-user-onboarding.ts`](./examples/new-user-onboarding.ts) | Welcome email + Notion page + Slack notification on signup | Webhook | `RESEND_API_KEY`, `NOTION_TOKEN`, `SLACK_TOKEN` |
-| [`api-error-monitor.ts`](./examples/api-error-monitor.ts) | Poll API health → PagerDuty + Slack on failure | Schedule (every 5 min) | `API_HEALTH_URL`, `PAGERDUTY_ROUTING_KEY`, `SLACK_TOKEN` |
+| [`daily-revenue-report.ts`](./examples/daily-revenue-report.ts) | Fetch Stripe revenue → post to Slack | Schedule (8 AM daily) | `STRIPE_SECRET_KEY`, `SLACK_BOT_TOKEN` |
+| [`new-user-onboarding.ts`](./examples/new-user-onboarding.ts) | Welcome email + Notion page + Slack notification on signup | Webhook | `RESEND_API_KEY`, `NOTION_TOKEN`, `SLACK_BOT_TOKEN` |
+| [`api-error-monitor.ts`](./examples/api-error-monitor.ts) | Poll API health → PagerDuty + Slack on failure | Schedule (every 5 min) | `API_HEALTH_URL`, `PAGERDUTY_ROUTING_KEY`, `SLACK_BOT_TOKEN` |
 
 To use an example, paste its code into a conversation and ask Claude to register it:
 
@@ -484,34 +514,18 @@ To use an example, paste its code into a conversation and ask Claude to register
 
 ---
 
-## How it works
+## vs. Zapier / n8n / Make / Temporal
 
-```
-You (natural language)
-    ↓
-Claude Desktop / Claude Code
-    ↓  MCP protocol over stdio
-Zyk MCP Server
-    ├── workflows/registry.json   persisted workflow registry
-    └── (fork per workflow)
-        Worker Subprocess  →  tsx transpiles .ts at runtime
-            ↓  gRPC
-        Hatchet Engine  (Docker :8888 UI, :8080 API, :7077 gRPC)
-            ↓
-        PostgreSQL  (Docker)
-```
+| | Zapier/Make | n8n | Serverless functions | Temporal | **Zyk** |
+|---|---|---|---|---|---|
+| Interface | Visual UI | Visual UI | Code | Code | **Conversation** |
+| Connectors | Pre-built only | Pre-built only | DIY | DIY | **Any API Claude knows** |
+| Durability | Basic | Basic | No (timeout-bound) | Yes | **Yes (Hatchet)** |
+| Human-in-the-loop | Workarounds | Workarounds | Requires split architecture | Yes | **Yes — wait days if needed** |
+| Self-host | Limited | Yes | Cloud-only | Complex | **One command** |
+| Custom logic | Limited | Limited | Full code | Full code | **Full TypeScript** |
 
----
-
-## vs. Zapier / n8n / Make
-
-| | Zapier/Make | n8n | **Zyk** |
-|---|---|---|---|
-| Interface | Visual UI | Visual UI | **Conversation** |
-| Connectors | Pre-built only | Pre-built only | **Any API Claude knows** |
-| Durability | Basic | Basic | **Yes (Hatchet)** |
-| Self-host | Limited | Yes | **One command** |
-| Custom logic | Limited | Limited | **Full TypeScript** |
+**Human-in-the-loop is where serverless breaks down.** A workflow that sends an approval request and waits for a human response can't run inside a single serverless function — it times out. The common workaround is splitting the workflow across multiple functions connected by a queue, with external state to track where you were. That split architecture is exactly the complexity that durable execution eliminates: the workflow is one continuous process that pauses, waits as long as needed, and resumes.
 
 ---
 

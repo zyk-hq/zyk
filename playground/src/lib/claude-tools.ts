@@ -475,10 +475,9 @@ These API keys are pre-configured — use them directly:
   Response shape: \`{ name, sys: { country, sunrise, sunset }, weather: [{ description }], main: { temp, feels_like, temp_min, temp_max, humidity, pressure }, wind: { speed, deg }, visibility, clouds: { all } }\`
   Access as: \`data.main.temp\`, \`data.weather[0].description\`, \`data.wind.speed\`, \`data.sys.country\`, etc.
 - **NewsAPI**: \`process.env.NEWSAPI_API_KEY\` — GET https://newsapi.org/v2/top-headlines
-- **Resend (email)**: \`process.env.RESEND_API_KEY\` — POST https://api.resend.com/emails
 - Any public HTTP GET endpoint (e.g. SWAPI, Open Meteo, REST Countries)
 
-**Do NOT** attempt to use Slack, Stripe, AWS, or any API not listed above.
+**Do NOT** attempt to use Slack, Stripe, AWS, email APIs, or any API not listed above.
 
 ## Human-in-the-loop interactions
 Instead of Slack buttons, ask the user directly using HTTP:

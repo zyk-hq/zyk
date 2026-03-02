@@ -947,12 +947,7 @@ export default function Chat({ sessionId }: Props) {
                         desc: "Search and filter news articles from thousands of sources.",
                         url: "https://newsapi.org/docs",
                       },
-                      {
-                        name: "Resend",
-                        env: "RESEND_API_KEY",
-                        desc: "Send transactional emails with a simple REST API.",
-                        url: "https://resend.com/docs",
-                      },
+
                     ].map((api) => (
                       <a
                         key={api.name}

@@ -549,10 +549,23 @@ function landingPage(_port: number): string {
       svg.style.userSelect = 'none';
 
       let s = 1, x = 0, y = 0;
+      let defaultX = 0, defaultY = 0;
 
       function apply() {
         svg.style.transform = \`translate(\${x}px,\${y}px) scale(\${s})\`;
       }
+
+      // Center the diagram once it's been painted
+      requestAnimationFrame(() => {
+        const wr = wrap.getBoundingClientRect();
+        const sr = svg.getBoundingClientRect();
+        if (wr.width > 0 && sr.width > 0) {
+          defaultX = Math.max(0, (wr.width - sr.width) / 2);
+          defaultY = Math.max(0, (wr.height - sr.height) / 2);
+          x = defaultX; y = defaultY;
+          apply();
+        }
+      });
 
       function zoomAt(cx, cy, factor) {
         const ns = Math.max(0.15, Math.min(6, s * factor));
@@ -584,7 +597,7 @@ function landingPage(_port: number): string {
       // Double-click to reset
       wrap.addEventListener('dblclick', e => {
         if (e.target.closest('.diagram-controls')) return;
-        s = 1; x = 0; y = 0; apply();
+        s = 1; x = defaultX; y = defaultY; apply();
       });
 
       // +/−/↺ buttons
@@ -596,7 +609,7 @@ function landingPage(_port: number): string {
       const [btnIn, btnOut, btnReset] = ctrl.querySelectorAll('button');
       btnIn.addEventListener('click',    () => { const [cx,cy] = center(); zoomAt(cx, cy, 1.3); });
       btnOut.addEventListener('click',   () => { const [cx,cy] = center(); zoomAt(cx, cy, 0.77); });
-      btnReset.addEventListener('click', () => { s=1; x=0; y=0; apply(); });
+      btnReset.addEventListener('click', () => { s=1; x=defaultX; y=defaultY; apply(); });
     }
 
     // ── Diagram rendering ─────────────────────────────────────────────────────

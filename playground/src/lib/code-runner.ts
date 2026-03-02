@@ -61,6 +61,24 @@ export function validateWorkflowCode(code: string): CodeValidationResult {
     );
   }
 
+  // Block requests to internal/private network addresses (SSRF prevention)
+  const ssrfPatterns = [
+    /169\.254\.169\.254/,          // cloud metadata (AWS, GCP, Azure)
+    /100\.100\.100\.200/,          // Alibaba Cloud metadata
+    /192\.168\.\d+\.\d+/,         // RFC 1918 private
+    /10\.\d+\.\d+\.\d+/,          // RFC 1918 private
+    /172\.(1[6-9]|2\d|3[01])\.\d+\.\d+/, // RFC 1918 private
+    /\blocalhost\b/,
+    /127\.\d+\.\d+\.\d+/,         // loopback
+    /\[::1\]/,                     // IPv6 loopback
+  ];
+  for (const pattern of ssrfPatterns) {
+    if (pattern.test(code)) {
+      errors.push("Requests to internal or private network addresses are not allowed.");
+      break;
+    }
+  }
+
   return { valid: errors.length === 0, errors, warnings };
 }
 

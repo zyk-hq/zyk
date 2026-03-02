@@ -95,12 +95,22 @@ function forkWorker(workflowId: string, sessionId: string, jsFilePath: string): 
     const child = fork(workerProcessPath, [jsFilePath, workflowId], {
       cwd: process.cwd(),
       env: {
-        ...process.env,
-        HATCHET_CLIENT_TLS_STRATEGY:
-          process.env.HATCHET_CLIENT_TLS_STRATEGY ?? "none",
-        ZYK_WEBHOOK_BASE:
-          process.env.ZYK_WEBHOOK_BASE ?? "http://localhost:3000",
+        // Explicit allowlist — never inherit the full parent env.
+        // ANTHROPIC_API_KEY and other server secrets are intentionally excluded.
+        PATH: process.env.PATH,
+        NODE_PATH: process.env.NODE_PATH,
+        NODE_ENV: process.env.NODE_ENV,
+        // Hatchet connection
+        HATCHET_CLIENT_TOKEN: process.env.HATCHET_CLIENT_TOKEN,
+        HATCHET_CLIENT_HOST_PORT: process.env.HATCHET_CLIENT_HOST_PORT ?? process.env.HATCHET_HOST_PORT,
+        HATCHET_CLIENT_TLS_STRATEGY: process.env.HATCHET_CLIENT_TLS_STRATEGY ?? "none",
+        // Playground-internal
+        ZYK_WEBHOOK_BASE: process.env.ZYK_WEBHOOK_BASE ?? "http://localhost:3000",
         ZYK_SESSION_ID: sessionId,
+        // Pre-configured API keys available to playground workflows
+        TAVILY_API_KEY: process.env.TAVILY_API_KEY,
+        OPENWEATHERMAP_API_KEY: process.env.OPENWEATHERMAP_API_KEY,
+        NEWSAPI_API_KEY: process.env.NEWSAPI_API_KEY,
       },
       stdio: ["ignore", "pipe", "pipe", "ipc"],
     });
