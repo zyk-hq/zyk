@@ -379,7 +379,7 @@ export async function executeTool(
 
     case "list_runs": {
       const { limit = 20, status, since_hours = 24 } = input;
-      const base = process.env.ZYK_WEBHOOK_BASE ?? "http://localhost:3000";
+      const base = `http://127.0.0.1:${process.env.PORT ?? 3000}`;
       const params = new URLSearchParams({ sessionId, limit: String(limit), since_hours: String(since_hours) });
       if (status) params.set("status", status);
       const res = await fetch(`${base}/api/runs?${params}`);

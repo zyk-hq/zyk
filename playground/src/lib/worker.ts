@@ -105,9 +105,11 @@ function forkWorker(workflowId: string, sessionId: string, jsFilePath: string): 
         HATCHET_CLIENT_HOST_PORT: process.env.HATCHET_CLIENT_HOST_PORT ?? process.env.HATCHET_HOST_PORT,
         HATCHET_CLIENT_TLS_STRATEGY: process.env.HATCHET_CLIENT_TLS_STRATEGY ?? "none",
         // Playground-internal
-        // Normalize localhost → 127.0.0.1 to avoid IPv6 resolution failures on Linux
-        ZYK_WEBHOOK_BASE: (process.env.ZYK_WEBHOOK_BASE ?? `http://127.0.0.1:${process.env.PORT ?? 3000}`)
-          .replace(/localhost/g, "127.0.0.1"),
+        // Always use 127.0.0.1 + the actual PORT so this works regardless of
+        // what ZYK_WEBHOOK_BASE is set to in the environment. On Railway and
+        // other Linux hosts, 'localhost' resolves to ::1 (IPv6) which fails
+        // when Next.js only listens on IPv4.
+        ZYK_WEBHOOK_BASE: `http://127.0.0.1:${process.env.PORT ?? 3000}`,
         ZYK_SESSION_ID: sessionId,
         // Pre-configured API keys available to playground workflows
         TAVILY_API_KEY: process.env.TAVILY_API_KEY,
