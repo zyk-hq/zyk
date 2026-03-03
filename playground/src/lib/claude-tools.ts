@@ -489,7 +489,8 @@ const askTask = workflow.task({
   retries: 3,
   fn: async (_input, ctx) => {
     const correlationId = \`question-\${Date.now()}\`;
-    const base = process.env.ZYK_WEBHOOK_BASE ?? "http://localhost:3000";
+    const base = process.env.ZYK_WEBHOOK_BASE;
+    if (!base) throw new Error("ZYK_WEBHOOK_BASE is not set");
 
     // Post question to the UI
     const res = await fetch(\`\${base}/api/interact/ask\`, {
@@ -514,7 +515,8 @@ workflow.task({
   retries: 0,   // never retry a polling loop
   fn: async (_input, ctx) => {
     const { correlationId } = await ctx.parentOutput(askTask) as { correlationId: string };
-    const base = process.env.ZYK_WEBHOOK_BASE ?? "http://localhost:3000";
+    const base = process.env.ZYK_WEBHOOK_BASE;
+    if (!base) throw new Error("ZYK_WEBHOOK_BASE is not set");
     const deadline = Date.now() + 30 * 60 * 1000;  // 30 min
 
     while (Date.now() < deadline) {
