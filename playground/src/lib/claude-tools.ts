@@ -475,9 +475,13 @@ These API keys are pre-configured — use them directly:
   Response shape: \`{ name, sys: { country, sunrise, sunset }, weather: [{ description }], main: { temp, feels_like, temp_min, temp_max, humidity, pressure }, wind: { speed, deg }, visibility, clouds: { all } }\`
   Access as: \`data.main.temp\`, \`data.weather[0].description\`, \`data.wind.speed\`, \`data.sys.country\`, etc.
 - **NewsAPI**: \`process.env.NEWSAPI_API_KEY\` — GET https://newsapi.org/v2/top-headlines
-- Any public HTTP GET endpoint (e.g. SWAPI, Open Meteo, REST Countries)
+- Any public **JSON API** endpoint (e.g. SWAPI, Open Meteo, REST Countries) — must return JSON, not HTML
 
-**Do NOT** attempt to use Slack, Stripe, AWS, email APIs, or any API not listed above.
+**Do NOT**:
+- Fetch arbitrary websites or scrape HTML pages (e.g. news sites, blogs, any URL returning text/html)
+- Attempt to use Slack, Stripe, AWS, email APIs, or any API not listed above
+
+If the user asks you to fetch a website or scrape HTML, explain that the playground only supports JSON APIs and suggest using the NewsAPI or Tavily Search instead.
 
 ## Human-in-the-loop interactions
 Instead of Slack buttons, ask the user directly using HTTP:
