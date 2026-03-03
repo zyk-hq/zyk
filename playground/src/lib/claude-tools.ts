@@ -474,7 +474,7 @@ These API keys are pre-configured — use them directly:
 - **OpenWeatherMap**: \`process.env.OPENWEATHERMAP_API_KEY\` — GET https://api.openweathermap.org/data/2.5/weather?q=CITY&appid=KEY&units=metric
   Response shape: \`{ name, sys: { country, sunrise, sunset }, weather: [{ description }], main: { temp, feels_like, temp_min, temp_max, humidity, pressure }, wind: { speed, deg }, visibility, clouds: { all } }\`
   Access as: \`data.main.temp\`, \`data.weather[0].description\`, \`data.wind.speed\`, \`data.sys.country\`, etc.
-- **NewsAPI**: \`process.env.NEWSAPI_API_KEY\` — GET https://newsapi.org/v2/top-headlines
+- **NewsAPI**: ~~not available~~ — free tier blocks non-localhost servers; use Tavily Search for news instead
 - Any public **JSON API** endpoint (e.g. SWAPI, Open Meteo, REST Countries) — must return JSON, not HTML
 
 **Do NOT**:
