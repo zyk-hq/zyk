@@ -105,7 +105,7 @@ function forkWorker(workflowId: string, sessionId: string, jsFilePath: string): 
         HATCHET_CLIENT_HOST_PORT: process.env.HATCHET_CLIENT_HOST_PORT ?? process.env.HATCHET_HOST_PORT,
         HATCHET_CLIENT_TLS_STRATEGY: process.env.HATCHET_CLIENT_TLS_STRATEGY ?? "none",
         // Playground-internal
-        ZYK_WEBHOOK_BASE: process.env.ZYK_WEBHOOK_BASE ?? "http://localhost:3000",
+        ZYK_WEBHOOK_BASE: process.env.ZYK_WEBHOOK_BASE ?? `http://127.0.0.1:${process.env.PORT ?? 3000}`,
         ZYK_SESSION_ID: sessionId,
         // Pre-configured API keys available to playground workflows
         TAVILY_API_KEY: process.env.TAVILY_API_KEY,
