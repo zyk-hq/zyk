@@ -1,8 +1,8 @@
 # Security
 
-## Before making this repository public
+## Before deploying Zyk anywhere reachable from the public internet
 
-**Rotate all credentials before pushing to a public repository or sharing the URL.**
+**Rotate all credentials before deploying beyond localhost/private networks or sharing any URLs.**
 
 | Credential | Where to rotate |
 |---|---|
@@ -24,7 +24,7 @@ git log --all --full-history -- "**/.env"
 git log --all --full-history -- .mcp.json
 ```
 
-The `.env` and `.mcp.json` files are in `.gitignore`, but it's worth verifying they were never committed. If they were, consider using [git-filter-repo](https://github.com/newren/git-filter-repo) to purge them from history before making the repo public.
+The `.env` and `.mcp.json` files are in `.gitignore`, but it's worth verifying they were never committed. If they were, consider using [git-filter-repo](https://github.com/newren/git-filter-repo) to purge them from history.
 
 ## Workflow code execution
 
