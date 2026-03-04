@@ -14,7 +14,7 @@
 After rotating, update the token in:
 1. `.env` (local development)
 2. `.mcp.json` (Claude Code)
-3. Claude Desktop config (`claude_desktop_config.json`)
+3. Claude config (`claude_desktop_config.json`)
 
 **Check git history for accidentally committed secrets:**
 
