@@ -29,7 +29,7 @@ MCP_DIR="${ROOT_DIR}/mcp-server"
 
 echo ""
 echo "${BOLD}  ⚡ Zyk Bootstrap${RESET}"
-echo "${DIM}  Starts Hatchet, generates an API token, and configures Claude Desktop${RESET}"
+echo "${DIM}  Starts Hatchet, generates an API token, and configures Claude${RESET}"
 echo ""
 
 cd "${ROOT_DIR}"
@@ -114,8 +114,8 @@ if [ ! -f "${MCP_DIR}/dist/index.js" ]; then
   echo ""
 fi
 
-# ── 8. Configure Claude Desktop ───────────────────────────────────────────────
-echo "  ${BOLD}Configuring Claude Desktop...${RESET}"
+# ── 8. Configure Claude ───────────────────────────────────────────────
+echo "  ${BOLD}Configuring Claude...${RESET}"
 echo ""
 node "${MCP_DIR}/setup.js" --yes
 

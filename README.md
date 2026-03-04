@@ -1,16 +1,16 @@
-# Zyk — Workflow Automation for Claude Desktop
+# Zyk — Workflow Automation for Claude
 
 **Describe it. Watch it build. Deploy it.**
 
 We're betting on two things: **Claude as the interface** for building and running automations, and **Hatchet as the engine** for executing them reliably. Zyk is what happens when you combine them.
 
-You describe a workflow in plain English inside Claude Desktop. Zyk generates real TypeScript and runs it on [Hatchet](https://hatchet.run) — a durable execution engine with retries, scheduling, and failure recovery built in by design.
+You describe a workflow in plain English inside Claude. Zyk generates real TypeScript and runs it on [Hatchet](https://hatchet.run) — a durable execution engine with retries, scheduling, and failure recovery built in by design.
 
 No visual builder. No connector library. No YAML. Just conversation.
 
 **What durable means in practice:** a workflow can fire on a Slack message, create a GitHub issue, post Acknowledge/Escalate buttons back to Slack, and wait hours for a human to respond — then resume and close the loop automatically. No split endpoints, no manual state management.
 
-**The same Claude Desktop interface works for everyone involved.** The engineer who built the incident response workflow and the on-call engineer who gets paged both interact through Claude. Builders create and manage. Participants approve, acknowledge, and respond. No separate dashboard needed.
+**The same Claude interface works for everyone involved.** The engineer who built the incident response workflow and the on-call engineer who gets paged both interact through Claude. Builders create and manage. Participants approve, acknowledge, and respond. No separate dashboard needed.
 
 Open source and self-hostable. One command to run. The generated code lives in your repo.
 
@@ -25,7 +25,7 @@ The playground runs pre-configured workflows in your browser. No Docker, no API 
 
 ## Why this stack
 
-**Claude Desktop** is becoming the daily interface for knowledge workers. Instead of building a separate UI, Zyk plugs into it — builders describe automations in conversation, Claude generates the code, Zyk deploys it. No new tool to learn.
+**Claude** is becoming the daily interface for knowledge workers. Instead of building a separate UI, Zyk plugs into it — builders describe automations in conversation, Claude generates the code, Zyk deploys it. No new tool to learn.
 
 **Hatchet over Temporal?** Single Docker image (Hatchet Lite), Postgres-only dependency, no Kafka or Cassandra, beautiful built-in monitoring UI. Temporal is powerful but complex to self-host. Hatchet is one `docker compose up`. That matters for small teams.
 
@@ -39,9 +39,9 @@ The playground runs pre-configured workflows in your browser. No Docker, no API 
 
 - [Docker](https://docs.docker.com/get-docker/) + Docker Compose
 - [Node.js 20+](https://nodejs.org/) — **on Windows, install natively (not inside WSL)**
-- [Claude Desktop](https://claude.ai/download) or [Claude Code](https://claude.ai/code)
+- [Claude](https://claude.ai/download)
 
-> **Windows users:** clone the repo on your Windows filesystem (e.g. `C:\Users\you\zyk-mcp`), not inside WSL. Claude Desktop runs as a Windows process and can't reach WSL paths.
+> **Windows users:** clone the repo on your Windows filesystem (e.g. `C:\Users\you\zyk-mcp`), not inside WSL. Claude runs as a Windows process and can't reach WSL paths.
 
 ---
 
@@ -49,7 +49,7 @@ The playground runs pre-configured workflows in your browser. No Docker, no API 
 
 ### Option A — One-command bootstrap (recommended)
 
-Clone the repo, then run one script. It starts Hatchet, generates an API token automatically, builds the MCP server, and configures Claude Desktop.
+Clone the repo, then run one script. It starts Hatchet, generates an API token automatically, builds the MCP server, and configures Claude.
 
 **macOS / Linux / Git Bash:**
 
@@ -67,7 +67,7 @@ cd zyk
 .\scripts\bootstrap.ps1
 ```
 
-Then **fully quit and restart Claude Desktop** (tray icon → Quit, then reopen). Ask Claude: *"List my workflows"* — you should see a confirmation that no workflows are registered yet.
+Then **fully quit and restart Claude** (tray icon → Quit, then reopen). Ask Claude: *"List my workflows"* — you should see a confirmation that no workflows are registered yet.
 
 ---
 
@@ -82,7 +82,7 @@ curl -O https://raw.githubusercontent.com/zyk-hq/zyk/main/docker-compose.yml
 # 2. Start Hatchet (see "Get a Hatchet token" below for the token step)
 docker compose up postgres hatchet-engine -d
 
-# 3. Configure Claude Desktop — run setup and follow the prompts
+# 3. Configure Claude — run setup and follow the prompts
 npx -y zyk-mcp setup
 ```
 
@@ -130,16 +130,16 @@ cp .env.example .env
 
 #### 5. Connect Claude to Zyk
 
-**Claude Desktop** — run the setup script:
+**Claude** — run the setup script:
 
 ```bash
 cd zyk/mcp-server
 node setup.js
 ```
 
-It auto-detects your OS and Claude Desktop install type and writes the config.
+It auto-detects your OS and Claude install type and writes the config.
 
-**Manual Claude Desktop config:**
+**Manual Claude config:**
 
 | Platform | Config path |
 |----------|-------------|
@@ -340,7 +340,7 @@ This stops the worker process, removes the code file, and removes it from the re
 ```
 You (natural language)
     ↓
-Claude Desktop / Claude Code
+Claude
     ↓  MCP protocol over stdio
 Zyk MCP Server
     ├── workflows/registry.json   persisted workflow registry
@@ -373,14 +373,14 @@ Zyk MCP Server
 
 ### "HATCHET_CLIENT_TOKEN is not set"
 
-The env var isn't reaching the MCP server process. In Claude Desktop, make sure `HATCHET_CLIENT_TOKEN` is in the `env` block of `claude_desktop_config.json` (not just in your shell). Restart Claude Desktop after changes.
+The env var isn't reaching the MCP server process. In Claude, make sure `HATCHET_CLIENT_TOKEN` is in the `env` block of `claude_desktop_config.json` (not just in your shell). Restart Claude after changes.
 
-### Tools don't appear in Claude Desktop
+### Tools don't appear in Claude
 
 - Confirm the `args` path is **absolute** and uses the correct slash style for your OS
 - **Windows:** make sure you're editing the right config file (see table above). If you installed from the **Windows Store**, the `%APPDATA%\Roaming\Claude\` path is silently ignored — use the `%LOCALAPPDATA%\Packages\Claude_pzs8sxrjxfjjc\LocalCache\Roaming\Claude\` path instead.
 - Test the server manually: run `node path/to/dist/index.js` in a terminal — it should print `Zyk MCP server running on stdio` and hang. That's correct.
-- Check Claude Desktop MCP logs:
+- Check Claude MCP logs:
   - **macOS:** `~/Library/Logs/Claude/mcp-server-zyk.log`
   - **Windows (installer):** `%APPDATA%\Roaming\Claude\logs\mcp-server-zyk.log`
   - **Windows (Store):** `%LOCALAPPDATA%\Packages\Claude_pzs8sxrjxfjjc\LocalCache\Roaming\Claude\logs\mcp-server-zyk.log`
@@ -409,7 +409,7 @@ Then update `HATCHET_CLIENT_TOKEN` in `.env`, `.mcp.json`, and `claude_desktop_c
 
 ### Worker crashes immediately after create_workflow
 
-Check the MCP server's stderr output. In Claude Code, this appears in the terminal. In Claude Desktop, check the logs directory:
+Check the MCP server's stderr output. In Claude Code, this appears in the terminal. In Claude, check the logs directory:
 
 - **macOS:** `~/Library/Logs/Claude/`
 - **Windows (installer):** `%APPDATA%\Roaming\Claude\logs\`
@@ -434,7 +434,7 @@ cd mcp-server && npm install
 
 ## Adding secrets for real workflows
 
-**Claude Desktop** — add to the `env` block in `claude_desktop_config.json`:
+**Claude** — add to the `env` block in `claude_desktop_config.json`:
 
 ```json
 {

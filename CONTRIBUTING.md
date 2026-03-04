@@ -14,7 +14,7 @@ Thank you for your interest in contributing! This guide covers how to get a loca
 
 ```bash
 git clone https://github.com/zyk-hq/zyk.git
-cd zyk-mcp
+cd zyk
 cd mcp-server && npm install
 ```
 
@@ -24,19 +24,26 @@ cd mcp-server && npm install
 docker compose up -d
 ```
 
-Wait ~15 seconds for Hatchet to initialise, then open http://localhost:8081 to confirm it's running.
+Wait ~15 seconds for Hatchet to initialise, then open http://localhost:8888 to confirm it's running.
 
-### 3. Run the setup script
+### 3. Generate a Hatchet token and configure env
+
+```bash
+node scripts/generate-token.js
+```
+
+This calls the Hatchet REST API and prints a token for your tenant. Copy it, then:
+
+```bash
+cp .env.example .env
+# Set HATCHET_CLIENT_TOKEN=<token> in .env
+```
+
+To connect Claude, run the setup script:
 
 ```bash
 node mcp-server/setup.js
 ```
-
-This will:
-- Prompt you for a tenant ID (find it in the Hatchet UI under Settings → Tenants)
-- Generate a Hatchet API token
-- Write a `.env` file in `mcp-server/`
-- Optionally update your Claude Desktop config
 
 ### 4. Start the MCP server
 
@@ -50,9 +57,9 @@ The server listens on port 3100. Open http://localhost:3100 to see the dashboard
 
 The repo includes a `.mcp.json` that registers the server with Claude Code automatically. Make sure `HATCHET_CLIENT_TOKEN` is set in `.env` first, then start a new Claude Code session in this directory.
 
-### Running with Claude Desktop
+### Running with Claude
 
-After running `setup.js`, the script updates your Claude Desktop config. Restart Claude Desktop to pick up the changes.
+After running `setup.js`, the script updates your Claude config. Restart Claude to pick up the changes.
 
 ## Typecheck and build
 

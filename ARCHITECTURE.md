@@ -24,7 +24,7 @@ Zyk bridges two systems: the **Model Context Protocol (MCP)** and **Hatchet** (a
 ```
 User (natural language)
       ↓
-Claude Desktop / Claude Code
+Claude
       ↓  (MCP protocol over stdio)
 Zyk MCP Server  ←→  workflows/ (disk: .ts files + registry.json)
       ↓  (fork per workflow)
@@ -41,7 +41,7 @@ PostgreSQL  (Docker)
 
 ```
 ┌─────────────────────────────────────────────────────────────────┐
-│  Claude Desktop / Claude Code                                   │
+│  Claude                                   │
 │                                                                 │
 │  "Create a workflow that posts Stripe revenue to Slack daily"   │
 └───────────────────────────┬─────────────────────────────────────┘

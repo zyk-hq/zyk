@@ -1,7 +1,7 @@
 #!/usr/bin/env node
 /**
  * Zyk setup script
- * Detects your Claude Desktop install type, prompts for config values,
+ * Detects your Claude install type, prompts for config values,
  * and writes the mcpServers entry to the correct config file.
  *
  * Usage: node setup.js   (or: npm run setup)
@@ -81,7 +81,7 @@ function detectConfigPath() {
         path: join(storeDir, "claude_desktop_config.json"),
         label: "Windows (Store)",
         note:
-          "Claude Desktop is installed from the Microsoft Store.\n" +
+          "Claude is installed from the Microsoft Store.\n" +
           "  Its config lives in a sandboxed path — " +
           yellow("%APPDATA%\\Roaming\\Claude") +
           " would be ignored.",
@@ -131,13 +131,13 @@ async function main() {
   const autoYes = process.argv.includes("--yes") || process.argv.includes("-y");
   console.log();
   console.log(bold("  ⚡ Zyk Setup"));
-  console.log(dim("  Configures Claude Desktop to connect to your Zyk MCP server."));
+  console.log(dim("  Configures Claude to connect to your Zyk MCP server."));
   console.log();
 
   // ── 1. Detect config path ────────────────────────────────────────────────
   const { path: configPath, label, note } = detectConfigPath();
 
-  console.log(`  ${bold("Claude Desktop install:")} ${cyan(label)}`);
+  console.log(`  ${bold("Claude install:")} ${cyan(label)}`);
   if (note) console.log(`  ${note}`);
   console.log(`  ${bold("Config path:")} ${dim(configPath)}`);
   console.log();
@@ -287,8 +287,8 @@ async function main() {
   console.log(green("  ✓ Config written."));
   console.log();
   console.log(bold("  Next steps:"));
-  console.log("  1. " + bold("Fully quit Claude Desktop") + dim(" (tray icon → Quit, not just close the window)"));
-  console.log("  2. Reopen Claude Desktop");
+  console.log("  1. " + bold("Fully quit Claude") + dim(" (tray icon → Quit, not just close the window)"));
+  console.log("  2. Reopen Claude");
   console.log("  3. Ask Claude: " + cyan('"List my workflows"'));
   console.log(
     dim('     You should see: "No workflows registered yet."')

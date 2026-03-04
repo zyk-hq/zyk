@@ -10,7 +10,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Added
 
 **Core MCP server**
-- Five MCP tools: `create_workflow`, `run_workflow`, `get_status`, `list_workflows`, `delete_workflow`
+- Nine MCP tools: `create_workflow`, `update_workflow`, `run_workflow`, `get_status`, `list_workflows`, `delete_workflow`, `list_runs`, `list_templates`, `use_template`, `review_workflow`
 - Dynamic TypeScript workflow registration and execution via Hatchet
 - Per-workflow worker process management (spawn, restart, terminate)
 - Structured error surfacing in `get_status`: failed step names, error messages, retry counts
@@ -29,7 +29,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Polling endpoint (`GET /slack/pending/:correlationId`) for workflow-level approval gates
 
 **Developer experience**
-- Cross-platform setup script (`node setup.js`) — generates tokens, writes `.env`, updates Claude Desktop config
+- Cross-platform setup script (`node setup.js`) — generates tokens, writes `.env`, updates Claude config
 - `.mcp.json` for Claude Code integration
 - Example workflows: daily revenue report, new user onboarding, API error monitor, incident response
 - `PROMPTS.md` with ready-to-paste Claude prompts for instant demos

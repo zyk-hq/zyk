@@ -9,7 +9,7 @@
 | `SLACK_BOT_TOKEN` | Slack app settings → OAuth & Permissions → Regenerate |
 | `SLACK_SIGNING_SECRET` | Slack app settings → Basic Information → Regenerate |
 | `GITHUB_TOKEN` | GitHub → Settings → Developer settings → Personal access tokens |
-| `HATCHET_CLIENT_TOKEN` | Run `docker compose exec hatchet-engine /hatchet-admin token create ...` |
+| `HATCHET_CLIENT_TOKEN` | Run `node scripts/generate-token.js` |
 
 After rotating, update the token in:
 1. `.env` (local development)

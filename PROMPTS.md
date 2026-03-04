@@ -1,12 +1,12 @@
 # Example Prompts
 
-Ready-to-paste prompts for Claude Desktop. Each one creates a real, runnable workflow in about 30 seconds.
+Ready-to-paste prompts for Claude. Each one creates a real, runnable workflow in about 30 seconds.
 
 ---
 
 ## 1. Daily revenue report
 
-Paste this into Claude Desktop to get a workflow that posts a Stripe revenue summary to Slack every morning:
+Paste this into Claude to get a workflow that posts a Stripe revenue summary to Slack every morning:
 
 ```
 Create a workflow that runs every weekday at 8 AM, fetches yesterday's revenue from the Stripe API, compares it to the same day last week, and posts a colour-coded summary to Slack — green if revenue is up, red if it's down.
@@ -63,5 +63,5 @@ Create a workflow that runs every Monday at 9 AM, makes a GET request to each of
 
 - After pasting a prompt, Claude will ask one or two clarifying questions if something is genuinely ambiguous (like a cron schedule), then generate and deploy the workflow automatically.
 - You can see the workflow running in real time at **http://localhost:3100**.
-- For full execution logs, click through to the Hatchet UI at **http://localhost:8081**.
+- For full execution logs, click through to the Hatchet UI at **http://localhost:8888**.
 - To trigger a workflow manually after creation, ask Claude: _"Run the [workflow name] workflow."_

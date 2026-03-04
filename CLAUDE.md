@@ -25,7 +25,7 @@ Zyk is different:
 ## Tech Stack
 
 ```
-Claude Desktop / Claude Code (conversation + code generation)
+Claude (conversation + code generation)
     ↓
 Zyk MCP Server (this repo — the core product)
     ↓
@@ -630,9 +630,9 @@ volumes:
 
 ---
 
-## Claude Desktop Configuration
+## Claude Configuration
 
-Users add Zyk to their Claude Desktop by adding this to `claude_desktop_config.json`:
+Users add Zyk to their Claude by adding this to `claude_desktop_config.json`:
 
 ```json
 {
@@ -700,7 +700,7 @@ GITHUB_TOKEN=
 - **No DSL** — Claude generates real TypeScript, not a custom format
 - **No connector library** — Claude writes API calls directly
 - **Hatchet not Temporal** — simpler self-hosting is a core feature
-- **MCP not REST API** — Claude Desktop is the primary interface
+- **MCP not REST API** — Claude is the primary interface
 - **Self-hosted first** — cloud hosted version comes later
 - **TypeScript only** — for MVP, keep it simple
 

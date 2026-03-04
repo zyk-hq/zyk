@@ -12,7 +12,7 @@ function Write-Cmd   { param($msg) Write-Host "  $msg" -ForegroundColor Cyan }
 
 Write-Host ""
 Write-Host "  ⚡ Zyk Bootstrap" -ForegroundColor White -NoNewline
-Write-Host "  — starts Hatchet, generates a token, configures Claude Desktop" -ForegroundColor DarkGray
+Write-Host "  — starts Hatchet, generates a token, configures Claude" -ForegroundColor DarkGray
 Write-Host ""
 
 # ── Detect docker compose ─────────────────────────────────────────────────────
@@ -133,8 +133,8 @@ if (-not (Test-Path $ServerDist)) {
     Write-Host ""
 }
 
-# ── 8. Configure Claude Desktop ───────────────────────────────────────────────
-Write-Step "Configuring Claude Desktop..."
+# ── 8. Configure Claude ───────────────────────────────────────────────
+Write-Step "Configuring Claude..."
 Write-Host ""
 $SetupScript = Join-Path $McpDir "setup.js"
 node $SetupScript --yes

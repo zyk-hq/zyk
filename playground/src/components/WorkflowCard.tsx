@@ -262,13 +262,13 @@ export default function WorkflowCard({ workflow, sessionId, logs = [], fullHeigh
         style={{
           borderTop: "1px solid var(--border)",
           background: "var(--bg)",
-          height: "200px",
+          height: "260px",
           overflowY: "auto",
           padding: "8px 14px",
         }}
       >
         {logs.length === 0 ? (
-          <div style={{ fontFamily: "var(--font-mono)", fontSize: "11px", color: "var(--text-muted)", opacity: 0.4, paddingTop: "2px" }}>
+          <div style={{ fontFamily: "var(--font-mono)", fontSize: "13px", color: "var(--text-muted)", opacity: 0.4, paddingTop: "2px" }}>
             Waiting for logs...
           </div>
         ) : (
@@ -280,7 +280,7 @@ export default function WorkflowCard({ workflow, sessionId, logs = [], fullHeigh
                 key={i}
                 style={{
                   fontFamily: "var(--font-mono)",
-                  fontSize: "11px",
+                  fontSize: "13px",
                   lineHeight: 1.5,
                   whiteSpace: "pre-wrap",
                   wordBreak: "break-all",

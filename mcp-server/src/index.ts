@@ -348,7 +348,7 @@ async function main() {
   const webhookPort = parseInt(process.env.WEBHOOK_PORT ?? "3100", 10);
   startWebhookServer(webhookPort);
 
-  // Connect MCP transport first — never block Claude Desktop waiting for workers
+  // Connect MCP transport first — never block Claude waiting for workers
   const transport = new StdioServerTransport();
   await server.connect(transport);
   console.error("Zyk MCP server running on stdio");

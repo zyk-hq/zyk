@@ -6,7 +6,7 @@
  *
  * ── HOW DIAGRAMS WORK IN THE MCP CONTEXT ─────────────────────────────────
  *
- * Claude Desktop renders `mermaid` code blocks as interactive diagrams in the
+ * Claude renders `mermaid` code blocks as interactive diagrams in the
  * side panel. When Claude calls create_workflow, it should ALSO output the
  * diagram in its chat response as a fenced code block:
  *
@@ -15,7 +15,7 @@
  *     ...
  *   ```
  *
- * This triggers Claude Desktop's native Mermaid renderer. No server-side SVG
+ * This triggers Claude's native Mermaid renderer. No server-side SVG
  * rendering is needed.
  *
  * The `diagram` field in create_workflow is stored alongside the workflow for
