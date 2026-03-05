@@ -6,7 +6,7 @@ We're betting on two things: **MCP-ready AI as the interface** for building and 
 
 You describe a workflow in plain English through Claude. Zyk generates structured TypeScript and runs it on a durable execution engine. Retries, scheduling, and error handling built in by design.
 
-No visual builder. No connector library. No YAML. Just conversation.
+No connectors to configure. No DSL to learn. Just describe it — the diagram builds itself.
 
 **What durable means in practice:** a workflow can fire on a Slack message, create a GitHub issue, post Acknowledge/Escalate buttons back to Slack, and wait hours for a human to respond — then resume and close the loop automatically. No split endpoints, no manual state management.
 
