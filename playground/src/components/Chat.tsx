@@ -503,7 +503,6 @@ export default function Chat({ sessionId }: Props) {
                       "Tavily Search",
                       "OpenWeatherMap",
                       "NewsAPI",
-                      "Resend Email",
                       "Any public API",
                     ].map((api) => (
                       <span
