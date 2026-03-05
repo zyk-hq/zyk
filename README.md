@@ -1,20 +1,20 @@
-# Zyk — Workflow Automation for Claude
+# Zyk — Open-Source Workflow Automation
 
-**Describe it. Watch it build. Deploy it.**
+**Describe it. Run it. Done.**
 
-We're betting on two things: **Claude as the interface** for building and running automations, and **Hatchet as the engine** for executing them reliably. Zyk is what happens when you combine them.
+We're betting on two things: **MCP-ready AI as the interface** for building and running workflows, and **durable execution as the engine** for making them reliable. Zyk is what happens when you combine them.
 
-You describe a workflow in plain English inside Claude. Zyk generates real TypeScript and runs it on [Hatchet](https://hatchet.run) — a durable execution engine with retries, scheduling, and failure recovery built in by design.
+You describe a workflow in plain English through Claude. Zyk generates structured TypeScript and runs it on a durable execution engine. Retries, scheduling, and error handling built in by design.
 
 No visual builder. No connector library. No YAML. Just conversation.
 
 **What durable means in practice:** a workflow can fire on a Slack message, create a GitHub issue, post Acknowledge/Escalate buttons back to Slack, and wait hours for a human to respond — then resume and close the loop automatically. No split endpoints, no manual state management.
 
-**The same Claude interface works for everyone involved.** The engineer who built the incident response workflow and the on-call engineer who gets paged both interact through Claude. Builders create and manage. Participants approve, acknowledge, and respond. No separate dashboard needed.
+**Builders describe and manage workflows through Claude.** Participants can respond through whatever interface the workflow surfaces — Slack, email, or directly through Claude. Different permissions, same underlying engine.
 
-Open source and self-hostable. One command to run. The generated code lives in your repo.
+Open source, self-hostable, or use Zyk Cloud. The generated code lives in your repo.
 
-> **⚠️ Early development.** Zyk is under active development. Expect rough edges and breaking changes. Feedback and issues are very welcome.
+> **🚧 Not released yet.** Zyk is not publicly available yet — we're getting close. [Subscribe at blog.zyk.dev](https://blog.zyk.dev) to be notified when it launches.
 
 **Try it without any setup → [zyk.dev](https://zyk.dev)**
 The playground runs pre-configured workflows in your browser. No Docker, no API keys, no local install needed.
