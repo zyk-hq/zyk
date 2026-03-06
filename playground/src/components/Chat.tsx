@@ -17,11 +17,11 @@ interface Props {
 
 // Examples to seed the input on click
 const EXAMPLES = [
+  "Fetch all Star Wars films from the SWAPI API, ask me if I like each George Lucas film, log my answers, and summarize all my decisions at the end",
   "Fetch the top 5 AI news headlines and log the title and source for each",
   "Get the weather in Berlin and London — log which city is warmer and by how much",
   "Fetch the latest SpaceX launch, log the mission name, date, and whether it succeeded",
   "Ask me which city to check the weather for, then fetch and log a full weather report",
-  "Fetch all Star Wars films from the SWAPI API, ask me if I like each George Lucas film, log my answers, and summarize all my decisions at the end",
 ];
 
 export default function Chat({ sessionId }: Props) {
