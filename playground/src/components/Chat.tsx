@@ -15,7 +15,7 @@ interface Props {
   sessionId: string;
 }
 
-// Examples to seed the input on click
+// Examples to seed the chat input on click
 const EXAMPLES = [
   "Fetch all Star Wars films from the SWAPI API, ask me if I like each George Lucas film, log my answers, and summarize all my decisions at the end",
   "Fetch the top 5 AI news headlines and log the title and source for each",
